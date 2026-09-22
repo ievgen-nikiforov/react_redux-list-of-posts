@@ -3,9 +3,9 @@ import { Post } from '../../types/Post';
 import { getUserPosts } from '../../api/posts';
 
 const initialState = {
-  posts: [] as Post[],
-  loading: false,
-  error: '',
+  items: [] as Post[],
+  loaded: false,
+  hasError: false,
 };
 
 export const getPostsThunk = createAsyncThunk(
@@ -23,21 +23,21 @@ const postsSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(getPostsThunk.pending, state => ({
       ...state,
-      loading: true,
-      error: '',
+      loaded: false,
+      hasError: false,
     }));
     builder.addCase(
       getPostsThunk.fulfilled,
       (state, action: PayloadAction<Post[]>) => ({
         ...state,
-        loading: false,
-        posts: action.payload,
+        loaded: true,
+        items: action.payload,
       }),
     );
-    builder.addCase(getPostsThunk.rejected, (state, action) => ({
+    builder.addCase(getPostsThunk.rejected, state => ({
       ...state,
-      loading: false,
-      error: action.error.message || 'Failed to fetch posts',
+      loaded: true,
+      hasError: true,
     }));
   },
 });

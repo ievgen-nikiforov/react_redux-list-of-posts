@@ -4,8 +4,8 @@ import { Comment, CommentData } from '../../types/Comment';
 
 const initialState = {
   items: [] as Comment[],
-  loading: false,
-  error: '',
+  loaded: false,
+  hasError: false,
 };
 
 export const getCommentsThunk = createAsyncThunk(
@@ -42,21 +42,21 @@ const commentsSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(getCommentsThunk.pending, state => ({
       ...state,
-      loading: true,
-      error: '',
+      loaded: false,
+      hasError: false,
     }));
     builder.addCase(
       getCommentsThunk.fulfilled,
       (state, action: PayloadAction<Comment[]>) => ({
         ...state,
-        loading: false,
+        loaded: true,
         items: action.payload,
       }),
     );
-    builder.addCase(getCommentsThunk.rejected, (state, action) => ({
+    builder.addCase(getCommentsThunk.rejected, state => ({
       ...state,
-      loading: false,
-      error: action.error.message || 'Failed to fetch comments',
+      loaded: true,
+      hasError: true,
     }));
 
     builder.addCase(
@@ -68,7 +68,7 @@ const commentsSlice = createSlice({
     );
     builder.addCase(addCommentThunk.rejected, state => ({
       ...state,
-      error: 'Failed to add a comment',
+      hasError: true,
     }));
 
     builder.addCase(
