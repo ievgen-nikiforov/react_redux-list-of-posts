@@ -9,9 +9,9 @@ export const getUsersThunk = createAsyncThunk('users/getUsers', async () => {
 });
 
 const initialState = {
-  users: [] as User[],
-  loading: false,
-  error: '',
+  items: [] as User[],
+  loaded: false,
+  hasError: false,
 };
 
 export const userSlice = createSlice({
@@ -21,21 +21,20 @@ export const userSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(getUsersThunk.pending, state => ({
       ...state,
-      loading: true,
-      error: '',
+      loaded: true,
+      hasError: false,
     }));
     builder.addCase(
       getUsersThunk.fulfilled,
       (state, action: PayloadAction<User[]>) => ({
         ...state,
-        loading: false,
-        users: action.payload,
+        items: action.payload,
+        loaded: true,
       }),
     );
-    builder.addCase(getUsersThunk.rejected, (state, action) => ({
+    builder.addCase(getUsersThunk.rejected, state => ({
       ...state,
-      loading: false,
-      error: action.error.message || 'Failed to fetch users',
+      hasError: true,
     }));
   },
 });
